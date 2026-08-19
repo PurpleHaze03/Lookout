@@ -1,0 +1,64 @@
+# Copy to watchlist.yaml and edit.
+# Five kinds of entries -- use any combination, delete what you don't need.
+# All URLs below are real pages; prices noted were seen on 2026-08-19 and
+# WILL have changed -- adjust targets to whatever deal you're hunting.
+
+# 1. PRICE WATCHES: alert when the price drops to/below target_price.
+watches:
+  # Seen at 209,99 € (UVP 279,90 €) -- alert me if it drops under 180.
+  - name: "Tommy Hilfiger Heritage Trenchcoat"
+    url: "https://www.otto.de/p/tommy-hilfiger-langjacke-heritage-single-breasted-trench-mit-den-typischen-trenchcoat-details-859880337/"
+    target_price: 180.00
+    currency: "EUR"
+
+  # AliExpress ships no prices in its static HTML -- lookout switches to
+  # the headless browser automatically (needs one-time: playwright install chromium).
+  # Seen at 173,99 €.
+  - name: "uConsole Kit RPi-CM4 Lite"
+    url: "https://de.aliexpress.com/item/1005012475003085.html"
+    target_price: 160.00
+    currency: "EUR"
+
+  # Amazon bestseller, seen at 18,99 € (RRP 23,00 €).
+  - name: "adidas Adilette Badeschuhe"
+    url: "https://www.amazon.de/dp/B07F73JQ96"
+    target_price: 15.00
+    currency: "EUR"
+    # Optional knobs (defaults shown):
+    # selector: ".a-price .a-offscreen"  # force a CSS selector if auto-detection fails
+    # render_js: false                   # force browser rendering (usually automatic)
+    # re_alert_drop_percent: 5           # mail again only if it falls another 5%...
+    # re_alert_cooldown_hours: 24        # ...or after 24h below target, whichever first
+
+# 2. STOCK WATCHES: alert when a sold-out item is available again.
+stock_watches:
+  # IKEA product pages expose availability as structured data -- ideal to watch.
+  - name: "GLOSTAD 3er-Sofa dunkelgrau"
+    url: "https://www.ikea.com/de/de/p/glostad-3er-sofa-knisa-dunkelgrau-40573285/"
+
+# 3. KEYWORD WATCHES: alert when a word/phrase appears on (or disappears from) a page.
+keyword_watches:
+  # Mail me the moment the next Python version shows up on the downloads page.
+  - name: "Python 3.15 release"
+    url: "https://www.python.org/downloads/"
+    keyword: "Python 3.15"
+    trigger: "appears"           # or "disappears" (e.g. watch "ausverkauft" vanish)
+
+# 4. CHANGE MONITORS: alert with a diff excerpt when a page meaningfully changes.
+change_watches:
+  # Rarely-changing pricing pages are perfect -- you only hear about real edits.
+  - name: "Hetzner Cloud Preise"
+    url: "https://www.hetzner.com/cloud/"
+    min_change_percent: 5        # alert when >= 5% of the page text changed
+
+# 5. SUMMARY DIGESTS: summarized content of these pages, combined into ONE
+#    digest mail per polling cycle.
+summaries:
+  # News front pages are digested via their headlines automatically.
+  - name: "Yahoo News"
+    url: "https://www.yahoo.com/news/"
+    max_sentences: 5
+
+  - name: "Tagesschau"
+    url: "https://www.tagesschau.de/"
+    max_sentences: 7
