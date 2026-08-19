@@ -1,0 +1,10 @@
+requests>=2.31
+beautifulsoup4>=4.12
+lxml>=4.9
+PyYAML>=6.0
+python-dotenv>=1.0
+APScheduler>=3.10
+
+# Headless-browser fallback for shops with bot protection (otto.de, amazon...).
+# After installing, run once:  playwright install chromium
+playwright>=1.40

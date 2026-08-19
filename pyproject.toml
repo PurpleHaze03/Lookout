@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lookout"
+version = "1.2.2"
+description = "Automated web scraper with price alerts and page-summary digests delivered by email"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Yussuf Jimale" }]
+dependencies = [
+    "requests>=2.31",
+    "beautifulsoup4>=4.12",
+    "lxml>=4.9",
+    "PyYAML>=6.0",
+    "python-dotenv>=1.0",
+    "APScheduler>=3.10",
+    "playwright>=1.40",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+lookout = "lookout.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["lookout*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
