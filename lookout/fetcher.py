@@ -60,10 +60,13 @@ BACKOFF_BASE = 2.0
 BOT_BLOCK_STATUS = {400, 401, 403, 405, 406, 409, 412, 418, 429, 503}
 
 # Markers of a 200 response that is really a captcha / block interstitial.
+# "verify you are a human/robot" (not a bare "verify you are", which also
+# matches age gates like "verify you are over 18").
 _BLOCK_MARKERS = re.compile(
     r"captcha|robot check|are you a (?:human|robot)|access denied"
     r"|zugriff verweigert|pardon our interruption|unusual traffic"
-    r"|verify you are|automated access|/errors/validatecaptcha",
+    r"|verify you are (?:a )?(?:human|not a robot)|automated access"
+    r"|/errors/validatecaptcha",
     re.IGNORECASE,
 )
 
