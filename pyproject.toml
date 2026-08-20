@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "lookout"
 version = "1.2.2"
-description = "Automated web scraper with price alerts and page-summary digests delivered by email"
+description = "Website monitoring with email alerts: price drops, restocks, keyword and page-change watches, and content digests"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
