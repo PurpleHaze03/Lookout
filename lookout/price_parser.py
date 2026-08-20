@@ -233,7 +233,8 @@ def _from_js_state(soup: BeautifulSoup) -> float | None:
     blobs = [
         s.string or s.get_text()
         for s in soup.find_all("script")
-        if s.get("type") in (None, "", "text/javascript", "application/javascript")
+        if s.get("type") in (None, "", "text/javascript", "application/javascript",
+                             "application/json")
     ]
     joined = "\n".join(b for b in blobs if b and ("rice" in b or "mount" in b))
     if not joined:
