@@ -82,7 +82,10 @@ def check_stock_item(item: StockItem, storage: Storage,
     html = fetch_html(item.url, render_js=item.render_js)
     prev = watchers.loads_state(storage.get_watch_state(item.key))
     result = watchers.evaluate_stock(html, prev)
-    if not (dry_run or smtp is None):  # don't consume the transition on a dry run
+    # Don't persist during a dry run (would consume the transition), and never
+    # overwrite a known state with UNKNOWN -- a transient glitch/maintenance
+    # page must not wipe a stored OUT_OF_STOCK and hide the coming restock.
+    if not (dry_run or smtp is None) and result.availability != watchers.UNKNOWN:
         storage.set_watch_state(item.key, watchers.dumps_state(availability=result.availability))
     log.info("%s -> %s (%s)", item.name, result.availability, result.reason)
 
