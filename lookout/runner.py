@@ -62,12 +62,14 @@ def check_watch_item(item: WatchItem, storage: Storage,
         return price, False
 
     if dry_run or smtp is None:
+        # A dry run must not mutate alert state, or it would "consume" this drop
+        # and silence the next real run for the same item.
         log.info("[dry-run] Would alert for %s: %s", item.name, decision.reason)
-    else:
-        emailer.send_price_alert(smtp, item, price,
-                                 lowest_seen=lowest_before,
-                                 reason=decision.reason,
-                                 prev_price=prev_price)
+        return price, True
+    emailer.send_price_alert(smtp, item, price,
+                             lowest_seen=lowest_before,
+                             reason=decision.reason,
+                             prev_price=prev_price)
     storage.record_alert(item.key, price)
     return price, True
 
@@ -80,7 +82,8 @@ def check_stock_item(item: StockItem, storage: Storage,
     html = fetch_html(item.url, render_js=item.render_js)
     prev = watchers.loads_state(storage.get_watch_state(item.key))
     result = watchers.evaluate_stock(html, prev)
-    storage.set_watch_state(item.key, watchers.dumps_state(availability=result.availability))
+    if not (dry_run or smtp is None):  # don't consume the transition on a dry run
+        storage.set_watch_state(item.key, watchers.dumps_state(availability=result.availability))
     log.info("%s -> %s (%s)", item.name, result.availability, result.reason)
 
     if result.should_alert:
@@ -97,7 +100,8 @@ def check_keyword_item(item: KeywordItem, storage: Storage,
     html = fetch_html(item.url, render_js=item.render_js)
     prev = watchers.loads_state(storage.get_watch_state(item.key))
     result = watchers.evaluate_keyword(html, item.keyword, item.trigger, prev)
-    storage.set_watch_state(item.key, watchers.dumps_state(present=result.present))
+    if not (dry_run or smtp is None):  # don't consume the transition on a dry run
+        storage.set_watch_state(item.key, watchers.dumps_state(present=result.present))
     log.info("%s -> keyword present=%s (%s)", item.name, result.present, result.reason)
 
     if result.should_alert:
@@ -115,7 +119,8 @@ def check_change_item(item: ChangeItem, storage: Storage,
     html = fetch_html(item.url, render_js=item.render_js)
     prev = watchers.loads_state(storage.get_watch_state(item.key))
     result = watchers.evaluate_change(html, prev, item.min_change_percent)
-    storage.set_watch_state(item.key, watchers.dumps_state(snapshot=result.new_snapshot))
+    if not (dry_run or smtp is None):  # don't advance the snapshot on a dry run
+        storage.set_watch_state(item.key, watchers.dumps_state(snapshot=result.new_snapshot))
     log.info("%s -> %s", item.name, result.reason)
 
     if result.should_alert:
