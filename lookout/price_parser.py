@@ -260,8 +260,11 @@ _EXCLUDED_ATTR = re.compile(
 # Reference/crossed-out prices betrayed by the TEXT itself ("UVP 279,90 €",
 # "RRP: €23.00", "251,37€ sparen"). Live-captured from otto.de, amazon.de,
 # and aliexpress.
+# Also exclude per-installment / "from" prices ("ab 25,00 €/Monat", "from £9.99"),
+# whose small figure would otherwise win over the real price.
 _EXCLUDED_TEXT = re.compile(
-    r"\b(uvp|rrp|statt|vorher|sparen|saves?|instead of|list price)\b",
+    r"\buvp\b|\brrp\b|\bstatt\b|\bvorher\b|\bsparen\b|\bsaves?\b|instead of|"
+    r"list price|\bab\b|\bfrom\b|monat|/\s*mo\b|per month",
     re.IGNORECASE,
 )
 
