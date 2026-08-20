@@ -184,6 +184,12 @@ def _from_meta_tags(soup: BeautifulSoup) -> float | None:
             candidate = tag.get("content") or tag.get_text(" ", strip=True)
             if not candidate:
                 continue
+            # Prefer a currency-adjacent number when the tag mixes a discount
+            # ("Save 30% - 49.99 EUR"); fall back to the first number for bare
+            # numeric contents like content="59.99".
+            price = parse_price_currency_first(candidate)
+            if price is not None:
+                return price
             try:
                 return parse_price(candidate)
             except PriceNotFoundError:
