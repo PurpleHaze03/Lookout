@@ -103,7 +103,12 @@ def extract_price(html: str, selector: str | None = None) -> tuple[float, str]:
         node = soup.select_one(selector)
         if node is None:
             raise PriceNotFoundError(f"CSS selector matched nothing: {selector!r}")
-        return parse_price(node.get_text(" ", strip=True)), "css-selector"
+        text = node.get_text(" ", strip=True)
+        # Prefer a currency-adjacent number: shops often glue a discount badge
+        # ("-23% 999,00 €") into the same element the selector targets, and the
+        # first bare number would be the 23, not the price.
+        price = parse_price_currency_first(text)
+        return (price if price is not None else parse_price(text)), "css-selector"
 
     for finder, method in (
         (_from_json_ld, "json-ld"),
