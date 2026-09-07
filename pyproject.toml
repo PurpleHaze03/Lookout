@@ -1,15 +1,15 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "lookout"
-version = "1.2.2"
+dynamic = ["version"]
 description = "Website monitoring with email alerts: price drops, restocks, keyword and page-change watches, and content digests"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
-authors = [{ name = "Yussuf Jimale" }]
+license = "MIT"
+authors = [{ name = "Yussuf" }]
 dependencies = [
     "requests>=2.31",
     "beautifulsoup4>=4.12",
@@ -25,6 +25,9 @@ dev = ["pytest>=7.4"]
 
 [project.scripts]
 lookout = "lookout.cli:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "lookout.__version__" }
 
 [tool.setuptools.packages.find]
 include = ["lookout*"]
