@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================
-#  lookout one-shot setup (Linux / macOS)
+#  lookout setup (Linux / macOS)
 #  Creates a virtual environment, installs all dependencies,
 #  the headless browser, and your starter config files.
 # ============================================================
@@ -32,8 +32,20 @@ echo " [3/5] Installing lookout + dependencies..."
 
 echo
 echo " [4/5] Installing the headless browser (Chromium, one-time ~150 MB)..."
-.venv/bin/python -m playwright install chromium || \
-    echo " WARNING: browser install failed - JS-heavy shops like AliExpress won't work until you run: .venv/bin/python -m playwright install chromium"
+# On Linux the browser also needs system libraries that only root can
+# install. Without them Chromium downloads fine and then fails to start on
+# a missing shared library, so have playwright install them too 
+# macOS needs no such step, and --with-deps is Debian/Ubuntu only.
+if [ "$(uname -s)" = "Linux" ]; then
+    PW_DEPS="--with-deps"
+else
+    PW_DEPS=""
+fi
+if ! .venv/bin/python -m playwright install $PW_DEPS chromium; then
+    echo " WARNING: browser setup failed - JS-heavy shops like AliExpress"
+    echo "          won't work until you run:"
+    echo "            .venv/bin/python -m playwright install --with-deps chromium"
+fi
 
 echo
 echo " [5/5] Creating starter config files..."
