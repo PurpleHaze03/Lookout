@@ -1,0 +1,24 @@
+# Daemon mode: poll the watchlist on a schedule and mail on transitions.
+#
+#   cp .env.example .env                   # fill in SMTP credentials
+#   mkdir -p data && cp watchlist.example.yaml data/watchlist.yaml
+#   sudo chown -R 1000:1000 data           # the container runs as uid 1000
+#   docker compose up -d
+#
+# One-off commands against the same image and state:
+#   docker compose run --rm lookout check
+#   docker compose run --rm lookout price "https://example.com/product"
+
+services:
+  lookout:
+    build: .
+    image: lookout
+    container_name: lookout
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      TZ: Europe/Berlin
+    volumes:
+      - ./data:/data
+    command: ["run"]
